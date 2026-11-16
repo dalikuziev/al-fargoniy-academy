@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # PostgreSQL Ma'lumotlar Bazasi
+  # ==========================================
+  db:
+    image: postgres:16-alpine
+    container_name: al_farganiy_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secret_password}
+      POSTGRES_DB: ${POSTGRES_DB:-al_farganiy_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-al_farganiy_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # FastAPI Backend REST API
+  # ==========================================
+  api:
+    build: .
+    container_name: al_farganiy_api
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres_secret_password}@db:5432/${POSTGRES_DB:-al_farganiy_db}
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
