@@ -1,17 +1,186 @@
 <!doctype html>
-<html lang="uz">
+<html lang="uz" dir="ltr">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    
+    <!-- Asosiy SEO Title -->
+    <title>Al-Farg'oniy Academy | Zamonaviy O'quv Markazi va IT Dasturlash Kurslari</title>
+    
+    <!-- Meta Tavsif (Google qidiruv natijalarida ko'rinadi) -->
+    <meta name="description" content="Al-Farg'oniy Academy (Al Fargoniy O'quv Markazi) — Yangiqo'rg'on va Uchko'prikdagi yetakchi IT akademiyasi. Dasturlash asoslari, Telegram bot yaratish, Web dasturlash va zamonaviy kompyuter kurslari. Professional ustozlar va sifatli ta'lim." />
+    
+    <!-- Barcha kalit so'zlar (Keywords) -->
+    <meta name="keywords" content="al fargoniy, al farg'oniy, al-farg'oniy, al-fargoniy, al farganiy, al-farganiy, alfargoniy, alfargoniy academy, al fargoniy academy, al-farg'oniy academy, al-farg'oniy o'quv markazi, al fargoniy oquv markazi, o'quv markaz, oquv markaz, o'quv markazi, oquv markazi, o'quv markazlari, oquv markazlari, academy, it academy, akademiya, it akademiya, zamonaviy o'quv markazi, dasturlash kurslari, dasturlash kursi, dasturlashni o'rganish, dasturlashni organish, dasturlash maktabi, it kurslar, it talim, telegram bot, telegram bot yaratish, telegram bot kursi, bot yasash, web site, veb sayt, veb dasturlash, web dasturlash, sayt yaratish, frontend, backend, dasturlash asoslari, kompyuter kurslari, kompyuter savodxonligi, bolalar uchun dasturlash, yangiqo'rg'on, yangiqorgon, yangiqo'rg'on o'quv markazi, yangiqorgon oquv markazi, uchko'prik, uchkoprik, uchko'prik o'quv markazi, uchkoprik oquv markazi, farg'ona o'quv markaz, fargona oquv markaz, al-farganiy.uz, ал фаргоний, ал-фаргоний, ал фарғоний академия, укув марказ, ўқув марказ, ўқув маркази, дастурлаш курслари, янгиқўрғон, учкўприк" />
+    
+    <meta name="author" content="Al-Farg'oniy Academy" />
+    <meta name="publisher" content="Al-Farg'oniy Academy" />
+    <meta name="copyright" content="Al-Farg'oniy Academy" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+    <meta name="yandex" content="index, follow" />
+    <link rel="canonical" href="https://al-farganiy.uz/" />
+    
+    <!-- Geo Meta Tags (Lokal SEO - Google Maps & Mahalla bo'yicha qidiruvlar uchun) -->
+    <meta name="geo.region" content="UZ-FA" />
+    <meta name="geo.placename" content="Farg'ona, Yangiqo'rg'on, Uchko'prik" />
+    
+    <!-- Favicon & Ikonkalar -->
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="shortcut icon" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Al-Farg'oniy Academy | O'quvchilar va To'lovlar Tizimi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <meta name="theme-color" content="#4f46e5" />
+    
+    <!-- Open Graph (Telegram, Facebook, WhatsApp, Instagram va boshqa ijtimoiy tarmoqlar uchun) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://al-farganiy.uz/" />
+    <meta property="og:title" content="Al-Farg'oniy Academy | Zamonaviy O'quv Markazi" />
+    <meta property="og:description" content="Yangiqo'rg'on va Uchko'prikdagi yetakchi IT akademiyasi. Dasturlash asoslari, Telegram bot, Web dasturlash kurslari." />
+    <meta property="og:image" content="https://al-farganiy.uz/logo.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="Al-Farg'oniy Academy Logo" />
+    <meta property="og:site_name" content="Al-Farg'oniy Academy" />
+    <meta property="og:locale" content="uz_UZ" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://al-farganiy.uz/" />
+    <meta name="twitter:title" content="Al-Farg'oniy Academy | O'quv Markazi" />
+    <meta name="twitter:description" content="Zamonaviy IT va dasturlash kurslari: Dasturlash asoslari, Telegram bot, Web sayt." />
+    <meta name="twitter:image" content="https://al-farganiy.uz/logo.png" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Google Structured Data (JSON-LD - Schema.org) - Qidiruvda 1-o'rinda chiqish uchun eng muhim omil -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "EducationalOrganization",
+          "@id": "https://al-farganiy.uz/#organization",
+          "name": "Al-Farg'oniy Academy",
+          "alternateName": [
+            "Al Fargoniy Academy",
+            "Al-Farg'oniy O'quv Markazi",
+            "Al Fargoniy Oquv Markazi",
+            "Al Farganiy Academy",
+            "Ал-Фарғоний Академияси"
+          ],
+          "url": "https://al-farganiy.uz/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://al-farganiy.uz/logo.png"
+          },
+          "image": "https://al-farganiy.uz/logo.png",
+          "description": "Al-Farg'oniy Academy - Yangiqo'rg'on va Uchko'prikdagi yetakchi IT va dasturlash o'quv markazi. Dasturlash asoslari, Telegram bot, Web sayt kurslari.",
+          "telephone": "+998911530608",
+          "sameAs": [
+            "https://t.me/dalikuziev"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Yangiqo'rg'on, Uchko'prik",
+            "addressRegion": "Farg'ona",
+            "addressCountry": "UZ"
+          },
+          "subOrganization": [
+            {
+              "@type": "EducationalOrganization",
+              "name": "Al-Farg'oniy Academy - Yangiqo'rg'on filiali",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Yangiqo'rg'on",
+                "addressRegion": "Farg'ona",
+                "addressCountry": "UZ"
+              }
+            },
+            {
+              "@type": "EducationalOrganization",
+              "name": "Al-Farg'oniy Academy - Uchko'prik filiali",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Uchko'prik",
+                "addressRegion": "Farg'ona",
+                "addressCountry": "UZ"
+              }
+            }
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "IT va Dasturlash Kurslari",
+            "itemListElement": [
+              {
+                "@type": "Course",
+                "name": "Dasturlash asoslari",
+                "description": "Dasturlash mantig'i, algoritmlar va dasturlash tillarining poydevori.",
+                "provider": {
+                  "@id": "https://al-farganiy.uz/#organization"
+                }
+              },
+              {
+                "@type": "Course",
+                "name": "Telegram bot yaratish",
+                "description": "Amaliy va biznes Telegram botlar yasash kursi.",
+                "provider": {
+                  "@id": "https://al-farganiy.uz/#organization"
+                }
+              },
+              {
+                "@type": "Course",
+                "name": "Web site (Veb dasturlash)",
+                "description": "Zamonaviy veb-saytlar, frontend va backend texnologiyalari.",
+                "provider": {
+                  "@id": "https://al-farganiy.uz/#organization"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://al-farganiy.uz/#website",
+          "url": "https://al-farganiy.uz/",
+          "name": "Al-Farg'oniy Academy",
+          "description": "Al-Farg'oniy Academy rasmiy tizimi va o'quv markazi",
+          "publisher": {
+            "@id": "https://al-farganiy.uz/#organization"
+          },
+          "inLanguage": "uz-UZ"
+        }
+      ]
+    }
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
-    <div id="root"></div>
+    <!-- Googlebot va barcha qidiruv botlari uchun semantik HTML (React yuklanguniga qadar ko'rinadi) -->
+    <div id="root">
+      <noscript>
+        <div style="font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6;">
+          <h1>Al-Farg'oniy Academy — Zamonaviy IT va Dasturlash O'quv Markazi</h1>
+          <p>
+            <strong>Al-Farg'oniy Academy (Al Fargoniy O'quv Markazi)</strong> — Yangiqo'rg'on va Uchko'prik filiallarida faoliyat yurituvchi zamonaviy IT akademiyasi va o'quv markazi.
+          </p>
+          <h2>Bizning Kurslarimiz:</h2>
+          <ul>
+            <li><strong>Dasturlash asoslari</strong> — algoritmlar, dasturlash tili poydevori</li>
+            <li><strong>Telegram bot yaratish</strong> — biznes va avtomatlashtirish botlari</li>
+            <li><strong>Web site yaratish</strong> — zamonaviy veb-saytlar (Frontend, Backend)</li>
+          </ul>
+          <h2>Filiallarimiz:</h2>
+          <ul>
+            <li>Yangiqo'rg'on filiali</li>
+            <li>Uchko'prik filiali</li>
+          </ul>
+          <p>Telefon: <a href="tel:+998911530608">+998 91 153 06 08</a></p>
+        </div>
+      </noscript>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

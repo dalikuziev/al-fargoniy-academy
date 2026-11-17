@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Qidiruv tizimlari uchun sitemap
+Sitemap: https://al-farganiy.uz/sitemap.xml

@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -107,6 +107,29 @@ def health_check():
         "status": "online",
         "version": "1.0.0",
     }
+
+
+# SEO uchun robots.txt va sitemap.xml yo'nalishlari
+@app.get("/robots.txt", include_in_schema=False)
+def get_robots_txt():
+    robots_file = os.path.join(FRONTEND_DIST, "robots.txt")
+    if os.path.exists(robots_file):
+        return FileResponse(robots_file, media_type="text/plain")
+    return Response(
+        "User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://al-farganiy.uz/sitemap.xml\n",
+        media_type="text/plain",
+    )
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+def get_sitemap_xml():
+    sitemap_file = os.path.join(FRONTEND_DIST, "sitemap.xml")
+    if os.path.exists(sitemap_file):
+        return FileResponse(sitemap_file, media_type="application/xml")
+    return Response(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://al-farganiy.uz/</loc>\n    <lastmod>2026-11-17</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>',
+        media_type="application/xml",
+    )
 
 
 # Frontend statik fayllari (React Build)
