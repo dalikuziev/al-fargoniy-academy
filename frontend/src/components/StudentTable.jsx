@@ -116,8 +116,8 @@ export default function StudentTable({
                 )}
               </div>
 
-              {/* Telefon raqami tugmasi (faqat login qilinganlarga) */}
-              {isLoggedIn && student.phone && (
+              {/* Telefon raqami tugmasi */}
+              {student.phone && (
                 <button
                   type="button"
                   onClick={() => onOpenPhoneAction(student)}
@@ -228,7 +228,7 @@ export default function StudentTable({
             <tr className="bg-slate-50/80 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200/80 dark:border-slate-700/80">
               <th className="py-3.5 px-4 w-12 text-center">#</th>
               <th className="py-3.5 px-4">Ism, Familya</th>
-              {isLoggedIn && <th className="py-3.5 px-4">Telefon</th>}
+              <th className="py-3.5 px-4">Telefon</th>
               <th className="py-3.5 px-4">Filial</th>
               <th className="py-3.5 px-4">Modul</th>
               <th className="py-3.5 px-4 text-center">Oylik To'lov</th>
@@ -264,19 +264,17 @@ export default function StudentTable({
                     {student.full_name}
                   </td>
 
-                  {/* Telefon - faqat login qilganlarga ko'rinadi */}
-                  {isLoggedIn && (
-                    <td className="py-3.5 px-4 whitespace-nowrap">
-                      <button
-                        type="button"
-                        onClick={() => onOpenPhoneAction(student)}
-                        title="Qo'ng'iroq qilish yoki Telegramdan ochish"
-                        className="font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline cursor-pointer transition text-xs sm:text-sm font-mono"
-                      >
-                        {student.phone}
-                      </button>
-                    </td>
-                  )}
+                  {/* Telefon */}
+                  <td className="py-3.5 px-4 whitespace-nowrap">
+                    <button
+                      type="button"
+                      onClick={() => onOpenPhoneAction(student)}
+                      title="Qo'ng'iroq qilish yoki Telegramdan ochish"
+                      className="font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline cursor-pointer transition text-xs sm:text-sm font-mono"
+                    >
+                      {student.phone}
+                    </button>
+                  </td>
 
                   {/* Filial */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
