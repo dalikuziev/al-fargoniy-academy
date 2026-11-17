@@ -93,36 +93,10 @@ export default function StatsCards({ summary, loading, isLoggedIn = false }) {
         </div>
       </div>
 
-      {/* Faqat login qilganda ko'rinadigan qism: Domla oldi, Admin oldi, Yig'ilgan tushim */}
+      {/* Faqat login qilganda ko'rinadigan qism: 4. Admin oldi, 5. Domla oldi, 6. Yig'ilgan tushim */}
       {isLoggedIn && (
         <>
-          {/* 4. Domla oldi */}
-          <div className="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border border-blue-100 dark:border-blue-950/60 shadow-xs hover:shadow-md transition flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">Domla oldi</span>
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <UserCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                </div>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl sm:text-2xl font-black text-blue-600 dark:text-blue-400">
-                  {loading ? '...' : teacherCount}
-                </span>
-                <span className="text-[10px] sm:text-xs font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded">
-                  {teacherPercentage}%
-                </span>
-              </div>
-            </div>
-            <div className="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-2.5 overflow-hidden">
-              <div
-                className="bg-blue-500 h-full rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, teacherPercentage)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* 5. Admin oldi */}
+          {/* 4. Admin oldi */}
           <div className="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border border-purple-100 dark:border-purple-950/60 shadow-xs hover:shadow-md transition flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
@@ -144,6 +118,32 @@ export default function StatsCards({ summary, loading, isLoggedIn = false }) {
               <div
                 className="bg-purple-500 h-full rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, adminPercentage)}%` }}
+              />
+            </div>
+          </div>
+
+          {/* 5. Domla oldi */}
+          <div className="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border border-blue-100 dark:border-blue-950/60 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">Domla oldi</span>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                  <UserCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl sm:text-2xl font-black text-blue-600 dark:text-blue-400">
+                  {loading ? '...' : teacherCount}
+                </span>
+                <span className="text-[10px] sm:text-xs font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded">
+                  {teacherPercentage}%
+                </span>
+              </div>
+            </div>
+            <div className="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-2.5 overflow-hidden">
+              <div
+                className="bg-blue-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, teacherPercentage)}%` }}
               />
             </div>
           </div>
