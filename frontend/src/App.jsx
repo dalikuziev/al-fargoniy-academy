@@ -347,7 +347,7 @@ export default function App() {
   // ========================================================
   const handleAddStudent = async (studentData) => {
     try {
-      await api.createStudent(studentData);
+      await api.createStudent(studentData, selectedMonth);
       showToast("Yangi o'quvchi muvaffaqiyatli qo'shildi!");
       await loadDepartments();
       await loadData();

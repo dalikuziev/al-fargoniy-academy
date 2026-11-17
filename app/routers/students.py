@@ -79,7 +79,11 @@ def get_student(
 
 
 @router.post("", response_model=schemas.StudentDetailOut, status_code=status.HTTP_201_CREATED)
-def create_student(student_in: schemas.StudentCreate, db: Session = Depends(get_db)):
+def create_student(
+    student_in: schemas.StudentCreate,
+    month: str = Query("2026-11", description="To'lov oyi"),
+    db: Session = Depends(get_db),
+):
     dept = crud.get_department(db, student_in.department_id)
     if not dept:
         raise HTTPException(status_code=400, detail="Bunday filial mavjud emas")
@@ -91,7 +95,7 @@ def create_student(student_in: schemas.StudentCreate, db: Session = Depends(get_
         db,
         schemas.PaymentCreate(
             student_id=student.id,
-            month="2026-10",
+            month=month,
             amount=student_in.amount or 250000.0,
             is_paid=False,
             is_taken_by_teacher=False,

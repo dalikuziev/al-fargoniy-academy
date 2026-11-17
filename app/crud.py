@@ -283,16 +283,25 @@ def ensure_monthly_payments_for_students(db: Session, month: str):
     Barcha faol o'quvchilarni tanlangan oyga 100% avtomatik o'tkazish.
     Agar yangi oy (masalan Dekabr) kelsa, barcha o'quvchilar avtomatik o'tadi (is_paid=False),
     oldingi oy (Noyabr) esa tarixda o'zgarmasdan saqlanib qoladi!
+    Dublikat to'lov yozuvlari bo'lsa, ularni tozalaydi.
     """
     active_students = db.query(models.Student).filter(models.Student.is_active == True).all()
-    created_any = False
+    created_or_cleaned = False
     for s in active_students:
-        exists = (
+        existing_payments = (
             db.query(models.Payment)
             .filter(models.Payment.student_id == s.id, models.Payment.month == month)
-            .first()
+            .order_by(models.Payment.id.desc())
+            .all()
         )
-        if not exists:
+        if len(existing_payments) > 1:
+            # Agar bir nechta bo'lib qolgan bo'lsa, to'langanini (yoki eng oxirgisini) qoldirib qolganini o'chiramiz
+            keep = next((p for p in existing_payments if p.is_paid), existing_payments[0])
+            for p in existing_payments:
+                if p.id != keep.id:
+                    db.delete(p)
+            created_or_cleaned = True
+        elif len(existing_payments) == 0:
             # Oldingi to'lov summasini olamiz
             prev_payment = (
                 db.query(models.Payment)
@@ -312,31 +321,57 @@ def ensure_monthly_payments_for_students(db: Session, month: str):
                 paid_at=None,
             )
             db.add(new_p)
-            created_any = True
-    if created_any:
+            created_or_cleaned = True
+
+    if created_or_cleaned:
         db.commit()
 
 
 def get_payment_summary(db: Session, month: str = "2026-11", department_id: Optional[int] = None) -> dict:
     ensure_monthly_payments_for_students(db, month)
-    query = (
+
+    students_query = db.query(models.Student).filter(models.Student.is_active == True)
+    if department_id is not None:
+        students_query = students_query.filter(models.Student.department_id == department_id)
+
+    active_students = students_query.all()
+    total_students = len(active_students)
+
+    if total_students == 0:
+        return {
+            "month": month,
+            "department_id": department_id,
+            "total_students": 0,
+            "paid_count": 0,
+            "unpaid_count": 0,
+            "taken_by_teacher_count": 0,
+            "taken_by_admin_count": 0,
+            "total_expected_sum": 0.0,
+            "total_collected_sum": 0.0,
+            "collection_percentage": 0.0,
+        }
+
+    student_ids = [s.id for s in active_students]
+    payments = (
         db.query(models.Payment)
-        .join(models.Student, models.Payment.student_id == models.Student.id)
-        .filter(models.Payment.month == month)
+        .filter(models.Payment.student_id.in_(student_ids), models.Payment.month == month)
+        .all()
     )
 
-    if department_id is not None:
-        query = query.filter(models.Student.department_id == department_id)
+    # 1 o'quvchiga 1 ta to'lov (deduplicate)
+    student_payment_map = {}
+    for p in payments:
+        if p.student_id not in student_payment_map or p.is_paid:
+            student_payment_map[p.student_id] = p
 
-    payments = query.all()
-    total_students = len(payments)
-    paid_count = sum(1 for p in payments if p.is_paid)
+    unique_payments = list(student_payment_map.values())
+    paid_count = sum(1 for p in unique_payments if p.is_paid)
     unpaid_count = total_students - paid_count
-    taken_by_teacher_count = sum(1 for p in payments if p.is_paid and p.is_taken_by_teacher)
-    taken_by_admin_count = sum(1 for p in payments if p.is_paid and p.is_taken_by_admin)
+    taken_by_teacher_count = sum(1 for p in unique_payments if p.is_paid and p.is_taken_by_teacher)
+    taken_by_admin_count = sum(1 for p in unique_payments if p.is_paid and p.is_taken_by_admin)
 
-    total_expected_sum = sum(p.amount for p in payments)
-    total_collected_sum = sum(p.amount for p in payments if p.is_paid)
+    total_expected_sum = sum(p.amount for p in unique_payments)
+    total_collected_sum = sum(p.amount for p in unique_payments if p.is_paid)
     percentage = (total_collected_sum / total_expected_sum * 100) if total_expected_sum > 0 else 0.0
 
     return {
@@ -349,5 +384,5 @@ def get_payment_summary(db: Session, month: str = "2026-11", department_id: Opti
         "taken_by_admin_count": taken_by_admin_count,
         "total_expected_sum": total_expected_sum,
         "total_collected_sum": total_collected_sum,
-        "collection_percentage": round(percentage, 2),
+        "collection_percentage": round(percentage, 1),
     }

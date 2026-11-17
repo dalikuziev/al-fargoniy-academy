@@ -33,13 +33,13 @@ export const api = {
     return res.data;
   },
 
-  getStudent: async (studentId, month = '2026-10') => {
+  getStudent: async (studentId, month = '2026-11') => {
     const res = await apiClient.get(`/students/${studentId}`, { params: { month } });
     return res.data;
   },
 
-  createStudent: async (studentData) => {
-    const res = await apiClient.post('/students', studentData);
+  createStudent: async (studentData, month = '2026-11') => {
+    const res = await apiClient.post('/students', studentData, { params: { month } });
     return res.data;
   },
 
@@ -54,7 +54,7 @@ export const api = {
   },
 
   // --- To'lovlar (Payments) ---
-  quickTogglePayment: async (studentId, { month = '2026-10', recipient = 'admin' } = {}) => {
+  quickTogglePayment: async (studentId, { month = '2026-11', recipient = 'admin' } = {}) => {
     const res = await apiClient.post(`/payments/quick-toggle/${studentId}`, null, {
       params: { month, recipient },
     });
