@@ -278,7 +278,47 @@ def update_payment(db: Session, payment_id: int, payment_in: schemas.PaymentUpda
     return payment
 
 
-def get_payment_summary(db: Session, month: str = "2026-10", department_id: Optional[int] = None) -> dict:
+def ensure_monthly_payments_for_students(db: Session, month: str):
+    """
+    Barcha faol o'quvchilarni tanlangan oyga 100% avtomatik o'tkazish.
+    Agar yangi oy (masalan Dekabr) kelsa, barcha o'quvchilar avtomatik o'tadi (is_paid=False),
+    oldingi oy (Noyabr) esa tarixda o'zgarmasdan saqlanib qoladi!
+    """
+    active_students = db.query(models.Student).filter(models.Student.is_active == True).all()
+    created_any = False
+    for s in active_students:
+        exists = (
+            db.query(models.Payment)
+            .filter(models.Payment.student_id == s.id, models.Payment.month == month)
+            .first()
+        )
+        if not exists:
+            # Oldingi to'lov summasini olamiz
+            prev_payment = (
+                db.query(models.Payment)
+                .filter(models.Payment.student_id == s.id)
+                .order_by(models.Payment.id.desc())
+                .first()
+            )
+            carry_amount = prev_payment.amount if prev_payment else 250000.0
+            new_p = models.Payment(
+                student_id=s.id,
+                month=month,
+                amount=carry_amount,
+                is_paid=False,
+                is_taken_by_teacher=False,
+                is_taken_by_admin=False,
+                comment=None,
+                paid_at=None,
+            )
+            db.add(new_p)
+            created_any = True
+    if created_any:
+        db.commit()
+
+
+def get_payment_summary(db: Session, month: str = "2026-11", department_id: Optional[int] = None) -> dict:
+    ensure_monthly_payments_for_students(db, month)
     query = (
         db.query(models.Payment)
         .join(models.Student, models.Payment.student_id == models.Student.id)

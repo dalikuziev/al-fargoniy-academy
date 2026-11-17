@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import Navbar from './components/Navbar';
+import Navbar, { getCurrentMonth } from './components/Navbar';
 import StatsCards from './components/StatsCards';
 import DepartmentTabs from './components/DepartmentTabs';
 import StudentTable from './components/StudentTable';
@@ -15,11 +15,34 @@ import { api } from './api';
 
 export default function App() {
   // Global & Filter State
-  const [selectedMonth, setSelectedMonth] = useState('2026-10');
+  const [selectedMonth, setSelectedMonth] = useState(() => getCurrentMonth());
   const [selectedBranchId, setSelectedBranchId] = useState(null); // Filial (1: Yangiqo'rg'on, 2: Uchko'prik)
   const [selectedModule, setSelectedModule] = useState(null);     // Modul (Dasturlash asoslari, Telegram bot, Web site)
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Qora / Oq fon rejimi (Dark / Light Mode)
+  const [isDark, setIsDark] = useState(() => {
+    try {
+      const saved = localStorage.getItem('al_farganiy_theme');
+      if (saved) return saved === 'dark';
+      return false;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('al_farganiy_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('al_farganiy_theme', 'light');
+    }
+  }, [isDark]);
+
+  const toggleTheme = () => setIsDark((prev) => !prev);
 
   // Data State
   const [departments, setDepartments] = useState([]); // Filiallar
@@ -368,16 +391,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className={`min-h-screen flex flex-col w-full max-w-full overflow-x-hidden ${isDark ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} transition-colors duration-200`}>
       {/* 1. Header / Navbar */}
       <Navbar
         selectedMonth={selectedMonth}
         setSelectedMonth={setSelectedMonth}
-        onRefresh={() => {
-          loadDepartments();
-          loadData();
-        }}
-        loading={loading}
+        isDark={isDark}
+        onToggleTheme={toggleTheme}
         onOpenAuthorContact={() => setIsAuthorModalOpen(true)}
         user={user}
         onOpenLogin={() => setIsLoginModalOpen(true)}
@@ -385,9 +405,9 @@ export default function App() {
       />
 
       {/* 2. Asosiy mazmun */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Statistika kartalari */}
-        <StatsCards summary={summary} loading={loading} />
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        {/* Statistika kartalari - domla oldi, admin oldi, yig'ilgan tushim faqat login qilinganda ko'rinadi */}
+        <StatsCards summary={summary} loading={loading} isLoggedIn={Boolean(user)} />
 
         {/* Filial va Modul filtrlari */}
         <DepartmentTabs
@@ -406,7 +426,7 @@ export default function App() {
           onPromptLogin={handlePromptLogin}
         />
 
-        {/* O'quvchilar jadvali */}
+        {/* O'quvchilar jadvali va mobil kartalari */}
         <StudentTable
           students={filteredStudents}
           loading={loading}
@@ -424,8 +444,8 @@ export default function App() {
       </main>
 
       {/* 3. Footer */}
-      <footer className="bg-white border-t border-slate-200/80 py-4 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+      <footer className="bg-white dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 py-4 mt-auto transition-colors">
+        <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
           © {new Date().getFullYear()} Al-Farg'oniy Academy. Barcha huquqlar himoyalangan.
         </div>
       </footer>

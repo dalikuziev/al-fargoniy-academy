@@ -23,7 +23,7 @@ def toggle_payment_status(
 @router.post("/quick-toggle/{student_id}", response_model=schemas.PaymentOut)
 def quick_toggle_student_payment(
     student_id: int,
-    month: str = Query("2026-10", description="To'lov oyi"),
+    month: str = Query("2026-11", description="To'lov oyi"),
     recipient: Optional[str] = Query("admin", description="Kim oldi: 'admin' yoki 'domla'"),
     amount: Optional[float] = Query(None, description="To'lov summasi"),
     db: Session = Depends(get_db),
@@ -94,7 +94,7 @@ def list_student_payments(student_id: int, db: Session = Depends(get_db)):
 
 @router.get("/summary", response_model=schemas.PaymentSummaryOut)
 def get_payment_summary(
-    month: str = Query("2026-10", description="To'lov oyi"),
+    month: str = Query("2026-11", description="To'lov oyi"),
     department_id: Optional[int] = Query(None, description="Filial ID bo'yicha filter"),
     db: Session = Depends(get_db),
 ):

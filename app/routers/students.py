@@ -14,11 +14,12 @@ def list_students(
     module: Optional[str] = Query(None, description="Modul bo'yicha filter (Dasturlash asoslari, Telegram bot, Web site)"),
     group_time: Optional[str] = Query(None, description="Eski moslik"),
     search: Optional[str] = Query(None, description="Ism yoki telefon qidirish"),
-    month: str = Query("2026-10", description="Ko'rsatiladigan to'lov oyi"),
+    month: str = Query("2026-11", description="Ko'rsatiladigan to'lov oyi"),
     skip: int = Query(0, ge=0),
     limit: int = Query(200, ge=1, le=500),
     db: Session = Depends(get_db),
 ):
+    crud.ensure_monthly_payments_for_students(db, month)
     students = crud.get_students(
         db,
         department_id=department_id,
@@ -53,7 +54,7 @@ def list_students(
 @router.get("/{student_id}", response_model=schemas.StudentDetailOut)
 def get_student(
     student_id: int,
-    month: str = Query("2026-10", description="To'lov oyi"),
+    month: str = Query("2026-11", description="To'lov oyi"),
     db: Session = Depends(get_db),
 ):
     student = crud.get_student(db, student_id)
