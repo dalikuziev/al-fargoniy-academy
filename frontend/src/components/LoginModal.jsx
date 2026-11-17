@@ -80,13 +80,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
             <input
               type="text"
               required
+              autoComplete="username"
               value={username}
               onChange={(e) => {
                 setUsername(e.target.value);
                 if (error) setError('');
               }}
-              placeholder="Masalan: dalikuziev"
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition"
             />
           </div>
 
@@ -99,13 +99,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
             <input
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
                 if (error) setError('');
               }}
-              placeholder="••••••••"
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition"
             />
           </div>
 
