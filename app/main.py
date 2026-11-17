@@ -132,6 +132,12 @@ def get_sitemap_xml():
     )
 
 
+# Google Search Console Verification fayli
+@app.get("/google5db4ca7f53be12be.html", include_in_schema=False)
+def get_google_verification():
+    return Response("google-site-verification: google5db4ca7f53be12be.html\n", media_type="text/html")
+
+
 # Frontend statik fayllari (React Build)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIST = os.path.join(BASE_DIR, "frontend", "dist")
