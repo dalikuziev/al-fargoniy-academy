@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from .. import crud, schemas
+from ..logger import logger
 
 router = APIRouter(prefix="/payments", tags=["Oylik To'lovlar (Payments)"])
 
@@ -17,6 +18,7 @@ def toggle_payment_status(
     payment = crud.toggle_payment_status(db, payment_id, toggle_data)
     if not payment:
         raise HTTPException(status_code=404, detail="To'lov yozuvi topilmadi")
+    logger.info(f"AUDIT | To'lov o'zgartirildi: to'lov_id={payment_id}, to'landi={payment.is_paid}, domla={payment.is_taken_by_teacher}, admin={payment.is_taken_by_admin}")
     return payment
 
 
@@ -61,6 +63,7 @@ def quick_toggle_student_payment(
         )
         payment = crud.toggle_payment_status(db, payment.id, toggle_data)
 
+    logger.info(f"AUDIT | Tezkor to'lov o'zgartirildi: o'quvchi='{student.full_name}' (id={student_id}), oy={month}, to'landi={payment.is_paid}, summa={payment.amount}")
     return payment
 
 

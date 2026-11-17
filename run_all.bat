@@ -6,8 +6,7 @@ echo ===================================================
 echo  Al-Farg'oniy Academy tizimi ishga tushmoqda...
 echo ===================================================
 echo  1. Backend API:     http://127.0.0.1:8000
-echo  2. Swagger Docs:    http://127.0.0.1:8000/docs
-echo  3. React Frontend:  http://localhost:3000
+echo  2. React Frontend:  http://localhost:3000
 echo ===================================================
 
 set "PATH=%~dp0tools\node-v22.11.0-win-x64;%PATH%"

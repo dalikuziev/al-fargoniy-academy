@@ -16,6 +16,13 @@ echo "📦 1/6: Kerakli paketlar o'rnatilmoqda..."
 apt update -y
 apt install -y python3 python3-pip python3-venv git nginx certbot python3-certbot-nginx curl ufw
 
+# 1.1 uv paket boshqaruvchisini o'rnatish (Astral uv - 10-100x tezroq)
+if ! command -v uv &> /dev/null; then
+    echo "⚡ uv o'rnatilmoqda..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ln -sf /root/.local/bin/uv /usr/local/bin/uv || true
+fi
+
 # 2. Loyihani GitHub'dan yuklash
 echo "📥 2/6: Loyiha GitHub'dan ko'chirib olinmoqda..."
 mkdir -p /var/www
@@ -29,11 +36,11 @@ else
     cd al-farganiy
 fi
 
-# 3. Python virtual muhitini yaratish va kutubxonalarni o'rnatish
-echo "🐍 3/6: Python muhiti sozlanmoqda..."
-python3 -m venv venv
-venv/bin/pip install --upgrade pip
-venv/bin/pip install -r requirements.txt
+# 3. uv yordamida Python muhiti va kutubxonalarni o'rnatish
+echo "🐍 3/6: Python muhiti uv bilan sozlanmoqda..."
+uv venv /var/www/al-farganiy/venv
+/var/www/al-farganiy/venv/bin/python -m pip install --upgrade pip || true
+uv pip install --python /var/www/al-farganiy/venv/bin/python -r requirements.txt
 
 # 4. .env faylini sozlash
 echo "⚙️  4/6: Konfiguratsiya fayli yaratilmoqda..."
@@ -43,7 +50,7 @@ APP_PORT=8000
 DATABASE_URL=sqlite:///./data/academy.db
 EOF
 
-mkdir -p data
+mkdir -p data logs
 
 # 5. Systemd 24/7 xizmatini o'rnatish
 echo "🔄 5/6: Systemd xizmati (24/7 avtomatik qayta yoqilish) sozlanmoqda..."

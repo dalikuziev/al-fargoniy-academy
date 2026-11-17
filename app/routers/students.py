@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from .. import crud, schemas
+from ..logger import logger
 
 router = APIRouter(prefix="/students", tags=["O'quvchilar (Students)"])
 
@@ -89,6 +90,7 @@ def create_student(
         raise HTTPException(status_code=400, detail="Bunday filial mavjud emas")
 
     student = crud.create_student(db, student_in)
+    logger.info(f"AUDIT | Yangi o'quvchi qo'shildi: id={student.id}, ism='{student.full_name}', filial={student.department_id}, summa={student_in.amount}")
 
     # To'lov summasi bilan joriy oy yozuvini kiritamiz (To'lanmagan, hech kimda emas)
     initial_payment = crud.create_or_update_payment(
@@ -125,6 +127,7 @@ def update_student(student_id: int, student_in: schemas.StudentUpdate, db: Sessi
     student = crud.update_student(db, student_id, student_in)
     if not student:
         raise HTTPException(status_code=404, detail="O'quvchi topilmadi")
+    logger.info(f"AUDIT | O'quvchi tahrirlandi: id={student_id}, ism='{student.full_name}'")
     return student
 
 
@@ -133,4 +136,5 @@ def delete_student(student_id: int, db: Session = Depends(get_db)):
     success = crud.delete_student(db, student_id)
     if not success:
         raise HTTPException(status_code=404, detail="O'quvchi topilmadi")
+    logger.warning(f"AUDIT | O'quvchi o'chirildi: id={student_id}")
     return None

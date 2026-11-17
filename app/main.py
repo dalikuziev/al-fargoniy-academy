@@ -1,26 +1,40 @@
 import os
+import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from .logger import logger, setup_logging
 from .database import engine, Base, SessionLocal
 from .seed import seed_database
 from .routers import departments, students, payments, auth
 
 
+# Loguru sozlamalarini faollashtirish
+setup_logging()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Dastur ishga tushganda ma'lumotlar bazasi jadvallarini yaratish va Oktyabr ma'lumotlarini yuklash
+    logger.info("Al-Farg'oniy Academy CRM tizimi ishga tushmoqda...")
+    # Dastur ishga tushganda ma'lumotlar bazasi jadvallarini yaratish va ma'lumotlarni yuklash
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         seed_database(db)
+        logger.info("Boshlang'ich ma'lumotlar (seed) tekshirildi.")
+    except Exception as e:
+        logger.exception(f"Seed ma'lumotlarini yuklashda xatolik: {e}")
     finally:
         db.close()
+
     yield
+
+    logger.info("Al-Farg'oniy Academy CRM tizimi to'xtatildi.")
 
 
 app = FastAPI(
@@ -32,7 +46,44 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS sozlamalari (Frontend istalgan domen yoki portdan to'siqsiz ulanishi uchun)
+
+class HTTPLoggingMiddleware(BaseHTTPMiddleware):
+    """
+    Barcha HTTP so'rovlar va javoblarni Loguru orqali
+    batafsil vaqt va holat kodi bilan log qilib boradi.
+    """
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.perf_counter()
+        client_ip = request.client.host if request.client else "unknown"
+        method = request.method
+        path = request.url.path
+
+        # Statik fayllar logni to'ldirib yubormasligi uchun filtrlash
+        is_asset = path.startswith("/assets") or path.endswith((".js", ".css", ".ico", ".png", ".jpg", ".svg", ".woff2"))
+
+        try:
+            response = await call_next(request)
+            duration_ms = (time.perf_counter() - start_time) * 1000
+
+            if not is_asset:
+                status_code = response.status_code
+                log_msg = f"{method} {path} | {status_code} | {client_ip} | {duration_ms:.1f}ms"
+                if status_code >= 500:
+                    logger.error(log_msg)
+                elif status_code >= 400:
+                    logger.warning(log_msg)
+                else:
+                    logger.info(log_msg)
+
+            return response
+        except Exception as exc:
+            duration_ms = (time.perf_counter() - start_time) * 1000
+            logger.exception(f"HTTP 500 XATOLIK | {method} {path} | {client_ip} | {duration_ms:.1f}ms | {exc}")
+            raise
+
+
+# Middleware-larni ulash
+app.add_middleware(HTTPLoggingMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

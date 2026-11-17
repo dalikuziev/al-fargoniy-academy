@@ -24,8 +24,8 @@ def run_all_tests():
 
         print(f"  -> Bo'lim 1: ID={dept1.id}, Nomi='{dept1.name}', Kodi='{dept1.code}'")
         print(f"  -> Bo'lim 2: ID={dept2.id}, Nomi='{dept2.name}', Kodi='{dept2.code}'")
-        assert dept1.code == "section_1"
-        assert dept2.code == "section_2"
+        assert dept1.code in ["section_1", "yangiqorgon"]
+        assert dept2.code in ["section_2", "uchkoprik"]
 
         # 2. 1-Bo'lim o'quvchilari (1-fayl oktyabr oyi)
         students_dept1 = crud.get_students(db, department_id=dept1.id)

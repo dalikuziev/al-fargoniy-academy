@@ -1,4 +1,4 @@
-# Python 3.12/3.14 asosidagi yengil konteyner
+# Python 3.12 asosidagi yengil konteyner
 FROM python:3.12-slim
 
 # Muhit o'zgaruvchilari
@@ -7,6 +7,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Astral uv binarisini rasmiy konteynerdan ko'chirib olish (ultra tezkor paket o'rnatish uchun)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 # PostgreSQL drayveri va tizim utilitalari
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
@@ -14,9 +17,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Bog'liqliklarni o'rnatish
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Bog'liqliklarni uv yordamida ultra tezkor o'rnatish
+COPY requirements.txt pyproject.toml uv.lock* ./
+RUN uv pip install --system -r requirements.txt
 
 # Loyiha fayllarini ko'chirish
 COPY . .
@@ -25,4 +28,4 @@ COPY . .
 EXPOSE 8000
 
 # Ishga tushirish buyrug'i
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "run.py"]
