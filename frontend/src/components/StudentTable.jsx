@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, X, Edit2, History, Phone, ShieldCheck, UserCheck } from 'lucide-react';
+import { Check, X, Edit2, History, Phone } from 'lucide-react';
 
 export default function StudentTable({
   students,
@@ -51,12 +51,12 @@ export default function StudentTable({
   };
 
   return (
-    <div className="w-full max-w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white dark:bg-slate-800/90 shadow-sm transition-colors">
+    <div className="w-full max-w-full">
       {/* ======================================================== */}
-      {/* 1. MOBIL KARTA REJIMI (sm/md dan kichik ekranlar uchun)  */}
-      {/* Hech qanday o'ng-chapga skrol bo'lmaydi!                  */}
+      {/* 1. MOBIL KARTA REJIMI (Telefonlar uchun chiroyli ilova)  */}
+      {/* Har bir o'quvchi alohida nafis kartochkada ko'rinadi    */}
       {/* ======================================================== */}
-      <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700/60">
+      <div className="md:hidden space-y-3">
         {students.map((student, index) => {
           const payment = student.latest_payment;
           const isPaid = Boolean(payment?.is_paid);
@@ -68,65 +68,88 @@ export default function StudentTable({
           return (
             <div
               key={student.id}
-              className={`p-3.5 space-y-2.5 transition-colors ${
+              className={`rounded-2xl border p-4 shadow-xs transition-all space-y-3 ${
                 isPaid
-                  ? 'bg-white dark:bg-slate-800/90'
-                  : 'bg-rose-50/25 dark:bg-rose-950/15'
+                  ? 'bg-white dark:bg-slate-800/95 border-slate-200/90 dark:border-slate-700/80'
+                  : 'bg-rose-50/20 dark:bg-rose-950/20 border-rose-200/70 dark:border-rose-900/40'
               }`}
             >
-              {/* Yuqori qator: # tartib raqam, Ism, Filial */}
+              {/* Yuqori qator: Tartib raqam, Ism, Filial va Harakatlar */}
               <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-700/80 text-slate-500 dark:text-slate-400 text-xs font-bold flex items-center justify-center shrink-0">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-sm leading-snug">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-black text-xs flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-900/50 shadow-xs">
+                    #{index + 1}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base leading-tight truncate">
                       {student.full_name}
                     </h3>
-                    {isLoggedIn && student.phone && (
-                      <button
-                        type="button"
-                        onClick={() => onOpenPhoneAction(student)}
-                        className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-medium flex items-center gap-1 mt-0.5"
-                      >
-                        <Phone className="w-3 h-3" />
-                        <span>{student.phone}</span>
-                      </button>
-                    )}
+                    <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                        {student.department_name || "Yangiqo'rg'on"}
+                      </span>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold border ${getModuleBadge(student.module || student.group_time)}`}>
+                        {student.module || student.group_time || 'Dasturlash asoslari'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[11px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 shrink-0">
-                  {student.department_name || "Yangiqo'rg'on"}
-                </span>
+                {/* O'ng yuqori: Amallar (Tarix va Tahrirlash) */}
+                {isLoggedIn && (
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => onOpenHistory(student)}
+                      title="To'lovlar tarixi"
+                      className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition cursor-pointer"
+                    >
+                      <History className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onOpenEditStudent(student)}
+                      title="Tahrirlash"
+                      className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition cursor-pointer"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* O'rta qator: Modul nishoni va Summa */}
-              <div className="flex items-center justify-between gap-2 pt-0.5">
-                <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[11px] font-bold border ${getModuleBadge(
-                    student.module || student.group_time
-                  )}`}
+              {/* Telefon raqami tugmasi (faqat login qilinganlarga) */}
+              {isLoggedIn && student.phone && (
+                <button
+                  type="button"
+                  onClick={() => onOpenPhoneAction(student)}
+                  className="w-full py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 hover:bg-indigo-50 dark:hover:bg-slate-700/60 border border-slate-200/70 dark:border-slate-700 text-xs font-mono font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between transition cursor-pointer"
                 >
-                  {student.module || student.group_time || 'Dasturlash asoslari'}
-                </span>
+                  <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>{student.phone}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-sans">Bog'lanish →</span>
+                </button>
+              )}
 
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                  {formatMoney(amount)}
-                </span>
-              </div>
+              {/* Pastki qator: To'lov summasi va Katta To'lov tugmasi */}
+              <div className="pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2">
+                <div>
+                  <span className="block text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">
+                    Oylik to'lov:
+                  </span>
+                  <span className="text-sm font-black text-slate-900 dark:text-white">
+                    {formatMoney(amount)}
+                  </span>
+                </div>
 
-              {/* Pastki qator: To'lov tugmasi va Kim oldi / Amallar */}
-              <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-100 dark:border-slate-700/50">
-                {/* To'lov holati tugmasi */}
+                {/* To'lov tugmasi */}
                 {isLoggedIn ? (
                   <button
                     onClick={() => onQuickTogglePayment(student.id)}
                     disabled={isToggling}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer ${
                       isPaid
-                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20'
                         : 'bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800'
                     }`}
                   >
@@ -137,13 +160,13 @@ export default function StudentTable({
                     ) : (
                       <X className="w-3.5 h-3.5 stroke-[2.5]" />
                     )}
-                    <span>{isPaid ? "To'langan" : "To'lanmadi"}</span>
+                    <span>{isPaid ? "To'landi" : "To'lanmadi"}</span>
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={onPromptLogin}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border cursor-pointer ${
                       isPaid
                         ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                         : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
@@ -154,59 +177,43 @@ export default function StudentTable({
                     ) : (
                       <X className="w-3.5 h-3.5 stroke-[2.5]" />
                     )}
-                    <span>{isPaid ? "To'langan" : "To'lanmadi"}</span>
+                    <span>{isPaid ? "To'landi" : "To'lanmadi"}</span>
                   </button>
                 )}
-
-                {/* Kim oldi & Amallar (Faqat Login qilganlarga) */}
-                {isLoggedIn && (
-                  <div className="flex items-center gap-1.5">
-                    {isPaid && (
-                      <div className="inline-flex p-0.5 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200/70 dark:border-slate-700 text-[11px] font-bold">
-                        <button
-                          type="button"
-                          onClick={() => onSwitchRecipient(student, payment, 'admin')}
-                          className={`px-2 py-0.5 rounded-md transition ${
-                            currentRecipient === 'admin'
-                              ? 'bg-purple-600 text-white shadow-xs'
-                              : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
-                          }`}
-                        >
-                          Admin
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onSwitchRecipient(student, payment, 'domla')}
-                          className={`px-2 py-0.5 rounded-md transition ${
-                            currentRecipient === 'domla'
-                              ? 'bg-blue-600 text-white shadow-xs'
-                              : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
-                          }`}
-                        >
-                          Domla
-                        </button>
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-0.5">
-                      <button
-                        onClick={() => onOpenHistory(student)}
-                        title="To'lovlar tarixi"
-                        className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg"
-                      >
-                        <History className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => onOpenEditStudent(student)}
-                        title="Tahrirlash"
-                        className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
+
+              {/* Agar to'langan bo'lsa va login qilingan bo'lsa: Kim oldi? (Admin | Domla) tanlash paneli */}
+              {isLoggedIn && isPaid && (
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    To'lovni kim oldi?
+                  </span>
+                  <div className="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700 text-xs font-bold">
+                    <button
+                      type="button"
+                      onClick={() => onSwitchRecipient(student, payment, 'admin')}
+                      className={`px-3 py-1 rounded-lg transition-all ${
+                        currentRecipient === 'admin'
+                          ? 'bg-purple-600 text-white shadow-xs'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      Admin
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onSwitchRecipient(student, payment, 'domla')}
+                      className={`px-3 py-1 rounded-lg transition-all ${
+                        currentRecipient === 'domla'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      Domla
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
@@ -215,7 +222,7 @@ export default function StudentTable({
       {/* ======================================================== */}
       {/* 2. DESKTOP / TABLET JADVAL REJIMI (md va undan katta)    */}
       {/* ======================================================== */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white dark:bg-slate-800/90 shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/80 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200/80 dark:border-slate-700/80">
@@ -310,7 +317,7 @@ export default function StudentTable({
                           ) : (
                             <X className="w-3.5 h-3.5 stroke-[2.5]" />
                           )}
-                          <span>{isPaid ? "To'langan" : "To'lanmadi"}</span>
+                          <span>{isPaid ? "To'landi" : "To'lanmadi"}</span>
                         </button>
                       ) : (
                         <button
@@ -328,7 +335,7 @@ export default function StudentTable({
                           ) : (
                             <X className="w-3.5 h-3.5 stroke-[2.5]" />
                           )}
-                          <span>{isPaid ? "To'langan" : "To'lanmadi"}</span>
+                          <span>{isPaid ? "To'landi" : "To'lanmadi"}</span>
                         </button>
                       )}
 
@@ -348,7 +355,6 @@ export default function StudentTable({
                         </span>
                       ) : (
                         <div className="inline-flex p-0.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200/70 dark:border-slate-700 text-xs font-bold">
-                          {/* Admin */}
                           <button
                             type="button"
                             onClick={() => onSwitchRecipient(student, payment, 'admin')}
@@ -361,7 +367,6 @@ export default function StudentTable({
                             Admin
                           </button>
 
-                          {/* Domla */}
                           <button
                             type="button"
                             onClick={() => onSwitchRecipient(student, payment, 'domla')}
@@ -382,7 +387,6 @@ export default function StudentTable({
                   {isLoggedIn && (
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1">
-                        {/* To'lovlar tarixi */}
                         <button
                           onClick={() => onOpenHistory(student)}
                           title="To'lovlar tarixi"
@@ -391,7 +395,6 @@ export default function StudentTable({
                           <History className="w-4 h-4" />
                         </button>
 
-                        {/* Tahrirlash */}
                         <button
                           onClick={() => onOpenEditStudent(student)}
                           title="O'quvchini tahrirlash"
@@ -409,10 +412,9 @@ export default function StudentTable({
         </table>
       </div>
 
-      {/* Table Footer */}
-      <div className="px-4 sm:px-6 py-3 bg-slate-50/50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
-        <span>Jami ko'rsatilmoqda: {students.length} nafar o'quvchi</span>
-        <span>Al-Farg'oniy Academy</span>
+      {/* Footer text */}
+      <div className="px-4 py-3 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
+        Jami {students.length} nafar o'quvchi
       </div>
     </div>
   );
