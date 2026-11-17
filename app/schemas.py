@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, ConfigDict, field_validator
 # ==========================================
 class PaymentBase(BaseModel):
     month: str = Field(default="2026-10", description="To'lov oyi")
-    amount: float = Field(default=250000.0, description="To'lov summasi")
+    amount: float = Field(default=300000.0, description="To'lov summasi")
     is_paid: bool = Field(default=False, description="To'langanlik holati")
     is_taken_by_teacher: bool = Field(default=False, description="Domla oldi")
     is_taken_by_admin: bool = Field(default=False, description="Admin oldi")
@@ -76,7 +76,7 @@ class StudentBase(BaseModel):
 
 class StudentCreate(StudentBase):
     raw_name: Optional[str] = None
-    amount: Optional[float] = Field(default=250000.0, description="Oylik to'lov summasi")
+    amount: Optional[float] = Field(default=300000.0, description="Oylik to'lov summasi")
     is_active: bool = True
 
 

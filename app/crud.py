@@ -309,7 +309,7 @@ def ensure_monthly_payments_for_students(db: Session, month: str):
                 .order_by(models.Payment.id.desc())
                 .first()
             )
-            carry_amount = prev_payment.amount if prev_payment else 250000.0
+            carry_amount = prev_payment.amount if prev_payment else 300000.0
             new_p = models.Payment(
                 student_id=s.id,
                 month=month,

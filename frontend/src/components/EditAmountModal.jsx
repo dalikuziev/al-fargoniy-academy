@@ -8,12 +8,12 @@ export default function EditAmountModal({
   payment,
   onSaveAmount,
 }) {
-  const [amount, setAmount] = useState('250000');
+  const [amount, setAmount] = useState('300000');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (payment) {
-      setAmount(String(payment.amount || 250000));
+      setAmount(String(payment.amount || 300000));
     }
   }, [payment]);
 

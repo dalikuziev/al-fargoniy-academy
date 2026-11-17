@@ -63,7 +63,7 @@ export default function StudentTable({
           const isTeacher = Boolean(payment?.is_taken_by_teacher);
           const currentRecipient = isTeacher ? 'domla' : 'admin';
           const isToggling = togglingIds.has(student.id);
-          const amount = payment?.amount || 250000;
+          const amount = payment?.amount || 300000;
 
           return (
             <div
@@ -243,7 +243,7 @@ export default function StudentTable({
               const isTeacher = Boolean(payment?.is_taken_by_teacher);
               const currentRecipient = isTeacher ? 'domla' : 'admin';
               const isToggling = togglingIds.has(student.id);
-              const amount = payment?.amount || 250000;
+              const amount = payment?.amount || 300000;
 
               return (
                 <tr

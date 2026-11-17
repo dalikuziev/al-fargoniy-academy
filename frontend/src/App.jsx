@@ -197,7 +197,7 @@ export default function App() {
           id: 0,
           student_id: studentId,
           month: selectedMonth,
-          amount: 250000.0,
+          amount: 300000.0,
           created_at: new Date().toISOString(),
         };
         return {

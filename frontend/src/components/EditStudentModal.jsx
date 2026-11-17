@@ -14,7 +14,7 @@ export default function EditStudentModal({
 }) {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [amount, setAmount] = useState('250000');
+  const [amount, setAmount] = useState('300000');
   const [departmentId, setDepartmentId] = useState(1);
   const [module, setModule] = useState(MODULES[0]);
   const [isActive, setIsActive] = useState(true);
@@ -26,7 +26,7 @@ export default function EditStudentModal({
     if (student) {
       setFullName(student.full_name || '');
       setPhone(student.phone || '');
-      setAmount(String(student.latest_payment?.amount || 250000));
+      setAmount(String(student.latest_payment?.amount || 300000));
       setDepartmentId(student.department_id || 1);
       setModule(student.module || student.group_time || MODULES[0]);
       setIsActive(student.is_active ?? true);
@@ -66,7 +66,7 @@ export default function EditStudentModal({
 
     try {
       setSubmitting(true);
-      const parsedAmount = parseFloat(amount) || 250000;
+      const parsedAmount = parseFloat(amount) || 300000;
       await onUpdateStudent(student.id, {
         full_name: fullName.trim(),
         phone: phone.trim(),

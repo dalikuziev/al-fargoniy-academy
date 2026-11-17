@@ -96,7 +96,7 @@ def create_student(
         schemas.PaymentCreate(
             student_id=student.id,
             month=month,
-            amount=student_in.amount or 250000.0,
+            amount=student_in.amount or 300000.0,
             is_paid=False,
             is_taken_by_teacher=False,
             is_taken_by_admin=False,

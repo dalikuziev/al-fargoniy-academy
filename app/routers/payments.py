@@ -45,7 +45,7 @@ def quick_toggle_student_payment(
             schemas.PaymentCreate(
                 student_id=student_id,
                 month=month,
-                amount=amount or 250000.0,
+                amount=amount or 300000.0,
                 is_paid=True,
                 is_taken_by_teacher=recipient == "domla",
                 is_taken_by_admin=recipient != "domla",

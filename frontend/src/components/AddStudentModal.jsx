@@ -11,7 +11,7 @@ export default function AddStudentModal({
 }) {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('+998');
-  const [amount, setAmount] = useState('250000');
+  const [amount, setAmount] = useState('300000');
   const [departmentId, setDepartmentId] = useState(departments[0]?.id || 1);
   const [module, setModule] = useState(MODULES[0]);
   const [submitting, setSubmitting] = useState(false);
@@ -50,7 +50,7 @@ export default function AddStudentModal({
 
     try {
       setSubmitting(true);
-      const parsedAmount = parseFloat(amount) || 250000;
+      const parsedAmount = parseFloat(amount) || 300000;
       await onAddStudent({
         full_name: fullName.trim(),
         phone: phone.trim(),
@@ -61,7 +61,7 @@ export default function AddStudentModal({
       });
       setFullName('');
       setPhone('+998');
-      setAmount('250000');
+      setAmount('300000');
       onClose();
     } finally {
       setSubmitting(false);
@@ -105,10 +105,9 @@ export default function AddStudentModal({
             <input
               type="text"
               required
-              placeholder="Masalan: Azizbek Karimov"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition"
             />
           </div>
 

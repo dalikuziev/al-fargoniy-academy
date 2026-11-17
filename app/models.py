@@ -53,7 +53,7 @@ class Payment(Base):
     id = Column(Integer, primary_key=True, index=True)
     student_id = Column(Integer, ForeignKey("students.id"), nullable=False, index=True)
     month = Column(String(20), nullable=False, default="2026-10", index=True)
-    amount = Column(Float, default=250000.0)
+    amount = Column(Float, default=300000.0)
     is_paid = Column(Boolean, default=False, index=True)
     is_taken_by_teacher = Column(Boolean, default=False)
     is_taken_by_admin = Column(Boolean, default=False)
