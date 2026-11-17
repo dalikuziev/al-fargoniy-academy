@@ -25,13 +25,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Al-Farg'oniy Academy REST API",
-    description="""
-    ## Al-Farg'oniy Academy Backend REST API
-    
-    O'quvchilar va Oylik To'lovlarni Boshqarish Tizimi API.
-    Professional Frontend (React / Next.js) uchun to'liq RESTful servis.
-    """,
     version="1.0.0",
+    docs_url=None,       # /docs butunlay o'chirildi va yashirildi
+    redoc_url=None,      # /redoc butunlay o'chirildi
+    openapi_url=None,    # /openapi.json butunlay o'chirildi
     lifespan=lifespan,
 )
 
@@ -75,7 +72,7 @@ if os.path.exists(FRONTEND_DIST):
         index_file = os.path.join(FRONTEND_DIST, "index.html")
         if os.path.exists(index_file):
             return FileResponse(index_file)
-        return {"status": "online", "docs": "/docs"}
+        return {"status": "online"}
 
     @app.exception_handler(StarletteHTTPException)
     async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -102,6 +99,4 @@ else:
             "service": "Al-Farg'oniy Academy Backend REST API",
             "status": "online",
             "version": "1.0.0",
-            "swagger_docs": "/docs",
-            "openapi_json": "/openapi.json",
         }
