@@ -68,31 +68,17 @@ export default function DepartmentTabs({
           })}
         </div>
 
-        {/* Yangi o'quvchi qo'shish */}
-        <button
-          onClick={
-            !isLoggedIn
-              ? onPromptLogin
-              : canEdit
-              ? onOpenAddModal
-              : onPromptReadOnly
-          }
-          title={
-            !isLoggedIn
-              ? "O'quvchi qo'shish uchun tizimga kiring"
-              : canEdit
-              ? "Yangi o'quvchi qo'shish"
-              : "Siz faqat ko'rish rejimidasiz"
-          }
-          className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-white text-xs sm:text-sm font-bold transition shadow-sm whitespace-nowrap shrink-0 ${
-            !canEdit && isLoggedIn
-              ? 'bg-slate-400 dark:bg-slate-700 opacity-60 cursor-not-allowed'
-              : 'bg-indigo-600 hover:bg-indigo-700 active:scale-95 shadow-indigo-500/25 cursor-pointer'
-          }`}
-        >
-          <UserPlus className="w-4 h-4" />
-          <span>Yangi O'quvchi Qo'shish</span>
-        </button>
+        {/* Yangi o'quvchi qo'shish - FAQAT dalikuziev (canEdit) bo'lsa chiqadi */}
+        {canEdit && (
+          <button
+            onClick={onOpenAddModal}
+            title="Yangi o'quvchi qo'shish"
+            className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs sm:text-sm font-bold transition shadow-sm shadow-indigo-500/25 cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>Yangi O'quvchi Qo'shish</span>
+          </button>
+        )}
       </div>
 
       {/* 2-qator: Modullar (Dasturlash asoslari / Telegram bot / Web site), Status Filter va Qidiruv */}
@@ -127,21 +113,23 @@ export default function DepartmentTabs({
 
         {/* O'ng tomon: Status Filter va Qidiruv */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          {/* Status Filter */}
-          <div className="relative">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full sm:w-auto appearance-none pl-7 pr-7 py-2 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200/80 dark:hover:bg-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer transition border border-transparent dark:border-slate-600 lowercase"
-            >
-              <option value="all" className="dark:bg-slate-800">jami o'quvchilar</option>
-              <option value="paid" className="dark:bg-slate-800">to'landi</option>
-              <option value="unpaid" className="dark:bg-slate-800">to'lanmadi</option>
-              <option value="admin" className="dark:bg-slate-800">admin oldi</option>
-              <option value="teacher" className="dark:bg-slate-800">domla oldi</option>
-            </select>
-            <Filter className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
+          {/* Status Filter - FAQAT login qilinganlarga (dalikuziev va admin) ko'rinadi */}
+          {isLoggedIn && (
+            <div className="relative">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full sm:w-auto appearance-none pl-7 pr-7 py-2 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200/80 dark:hover:bg-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer transition border border-transparent dark:border-slate-600 lowercase"
+              >
+                <option value="all" className="dark:bg-slate-800">jami o'quvchilar</option>
+                <option value="paid" className="dark:bg-slate-800">to'landi</option>
+                <option value="unpaid" className="dark:bg-slate-800">to'lanmadi</option>
+                <option value="admin" className="dark:bg-slate-800">admin oldi</option>
+                <option value="teacher" className="dark:bg-slate-800">domla oldi</option>
+              </select>
+              <Filter className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          )}
 
           {/* Qidiruv */}
           <div className="relative flex-1 sm:w-64">
