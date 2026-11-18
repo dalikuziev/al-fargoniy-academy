@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import crud, schemas
 from ..logger import logger
+from .auth import verify_write_permission
 
 router = APIRouter(prefix="/payments", tags=["Oylik To'lovlar (Payments)"])
 
@@ -14,6 +15,7 @@ def toggle_payment_status(
     payment_id: int,
     toggle_data: schemas.PaymentToggleStatus,
     db: Session = Depends(get_db),
+    _auth = Depends(verify_write_permission),
 ):
     payment = crud.toggle_payment_status(db, payment_id, toggle_data)
     if not payment:
@@ -29,6 +31,7 @@ def quick_toggle_student_payment(
     recipient: Optional[str] = Query("admin", description="Kim oldi: 'admin' yoki 'domla'"),
     amount: Optional[float] = Query(None, description="To'lov summasi"),
     db: Session = Depends(get_db),
+    _auth = Depends(verify_write_permission),
 ):
     """
     To'lov holatini almashtirish:
@@ -72,6 +75,7 @@ def update_payment(
     payment_id: int,
     payment_in: schemas.PaymentUpdate,
     db: Session = Depends(get_db),
+    _auth = Depends(verify_write_permission),
 ):
     payment = crud.update_payment(db, payment_id, payment_in)
     if not payment:
@@ -80,7 +84,11 @@ def update_payment(
 
 
 @router.post("/record", response_model=schemas.PaymentOut, status_code=status.HTTP_201_CREATED)
-def record_payment(payment_in: schemas.PaymentCreate, db: Session = Depends(get_db)):
+def record_payment(
+    payment_in: schemas.PaymentCreate,
+    db: Session = Depends(get_db),
+    _auth = Depends(verify_write_permission),
+):
     student = crud.get_student(db, payment_in.student_id)
     if not student:
         raise HTTPException(status_code=404, detail="O'quvchi topilmadi")

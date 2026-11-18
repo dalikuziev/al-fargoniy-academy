@@ -16,7 +16,9 @@ export default function DepartmentTabs({
   onOpenAddModal,
   totalStudentsCount,
   isLoggedIn = false,
+  canEdit = true,
   onPromptLogin,
+  onPromptReadOnly,
 }) {
   return (
     <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 p-3.5 sm:p-5 shadow-sm space-y-3 sm:space-y-4 transition-colors">
@@ -68,9 +70,25 @@ export default function DepartmentTabs({
 
         {/* Yangi o'quvchi qo'shish */}
         <button
-          onClick={isLoggedIn ? onOpenAddModal : onPromptLogin}
-          title={isLoggedIn ? "Yangi o'quvchi qo'shish" : "O'quvchi qo'shish uchun tizimga kiring"}
-          className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs sm:text-sm font-bold transition shadow-sm shadow-indigo-500/25 cursor-pointer whitespace-nowrap shrink-0"
+          onClick={
+            !isLoggedIn
+              ? onPromptLogin
+              : canEdit
+              ? onOpenAddModal
+              : onPromptReadOnly
+          }
+          title={
+            !isLoggedIn
+              ? "O'quvchi qo'shish uchun tizimga kiring"
+              : canEdit
+              ? "Yangi o'quvchi qo'shish"
+              : "Siz faqat ko'rish rejimidasiz"
+          }
+          className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-white text-xs sm:text-sm font-bold transition shadow-sm whitespace-nowrap shrink-0 ${
+            !canEdit && isLoggedIn
+              ? 'bg-slate-400 dark:bg-slate-700 opacity-60 cursor-not-allowed'
+              : 'bg-indigo-600 hover:bg-indigo-700 active:scale-95 shadow-indigo-500/25 cursor-pointer'
+          }`}
         >
           <UserPlus className="w-4 h-4" />
           <span>Yangi O'quvchi Qo'shish</span>

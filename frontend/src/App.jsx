@@ -94,6 +94,12 @@ export default function App() {
     showToast("Ushbu amalni bajarish uchun avval tizimga kiring!", "info");
   };
 
+  const canEdit = Boolean(user && user.role !== 'viewer' && user.can_edit !== false);
+
+  const handlePromptReadOnly = () => {
+    showToast("Siz faqat ko'rish rejimidasiz, ma'lumotlarni o'zgartirish huquqi yo'q!", "warning");
+  };
+
   // Escape tugmasi bosilganda barcha ochiq modal oynalarni yopish
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -181,6 +187,15 @@ export default function App() {
   // 1-KLIK TEZKOR TO'LOV TUGMASI (QUICK TOGGLE)
   // ========================================================
   const handleQuickTogglePayment = async (studentId) => {
+    if (!user) {
+      handlePromptLogin();
+      return;
+    }
+    if (!canEdit) {
+      handlePromptReadOnly();
+      return;
+    }
+
     const student = students.find((s) => s.id === studentId);
     if (!student) return;
 
@@ -254,6 +269,15 @@ export default function App() {
   // KIM OLDI (ADMIN / DOMLA) ALMASHTIRISH (MUTUALLY EXCLUSIVE)
   // ========================================================
   const handleSwitchRecipient = async (student, payment, newRecipient) => {
+    if (!user) {
+      handlePromptLogin();
+      return;
+    }
+    if (!canEdit) {
+      handlePromptReadOnly();
+      return;
+    }
+
     // Agar to'lov qilinmagan bo'lsa, kimdaligini belgilab bo'lmaydi!
     if (!payment?.is_paid) return;
 
@@ -304,6 +328,11 @@ export default function App() {
   // TO'LOV SUMMASINI TAHRIRLASH
   // ========================================================
   const handleSaveAmount = async (studentId, paymentId, newAmount) => {
+    if (!canEdit) {
+      handlePromptReadOnly();
+      return;
+    }
+
     // Optimistik yangilash
     setStudents((prev) =>
       prev.map((s) => {
@@ -346,6 +375,10 @@ export default function App() {
   // YANGI O'QUVCHI QO'SHISH
   // ========================================================
   const handleAddStudent = async (studentData) => {
+    if (!canEdit) {
+      handlePromptReadOnly();
+      return;
+    }
     try {
       await api.createStudent(studentData, selectedMonth);
       showToast("Yangi o'quvchi muvaffaqiyatli qo'shildi!");
@@ -362,6 +395,10 @@ export default function App() {
   // O'QUVCHINI TAHRIRLASH
   // ========================================================
   const handleUpdateStudent = async (studentId, updatedData) => {
+    if (!canEdit) {
+      handlePromptReadOnly();
+      return;
+    }
     try {
       await api.updateStudent(studentId, updatedData);
       showToast("O'quvchi ma'lumotlari yangilandi!");
@@ -378,6 +415,10 @@ export default function App() {
   // O'QUVCHINI O'CHIRISH
   // ========================================================
   const handleDeleteStudent = async (studentId) => {
+    if (!canEdit) {
+      handlePromptReadOnly();
+      return;
+    }
     try {
       await api.deleteStudent(studentId);
       showToast("O'quvchi tizimdan o'chirildi!");
@@ -423,7 +464,9 @@ export default function App() {
           onOpenAddModal={() => setIsAddModalOpen(true)}
           totalStudentsCount={totalStudentsCount}
           isLoggedIn={Boolean(user)}
+          canEdit={canEdit}
           onPromptLogin={handlePromptLogin}
+          onPromptReadOnly={handlePromptReadOnly}
         />
 
         {/* O'quvchilar jadvali va mobil kartalari */}
@@ -432,7 +475,9 @@ export default function App() {
           loading={loading}
           selectedMonth={selectedMonth}
           isLoggedIn={Boolean(user)}
+          canEdit={canEdit}
           onPromptLogin={handlePromptLogin}
+          onPromptReadOnly={handlePromptReadOnly}
           onQuickTogglePayment={handleQuickTogglePayment}
           onSwitchRecipient={handleSwitchRecipient}
           onOpenEditStudent={(student) => setEditingStudent(student)}

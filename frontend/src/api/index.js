@@ -10,6 +10,20 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
+// Avtomatik tokenni so'rovlarga qo'shish
+apiClient.interceptors.request.use((config) => {
+  try {
+    const saved = localStorage.getItem('al_farganiy_user');
+    if (saved) {
+      const user = JSON.parse(saved);
+      if (user?.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+      }
+    }
+  } catch {}
+  return config;
+});
+
 export const api = {
   // --- Filiallar (Branches / Departments) ---
   getDepartments: async () => {

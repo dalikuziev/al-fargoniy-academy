@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import crud, schemas
 from ..logger import logger
+from .auth import verify_write_permission
 
 router = APIRouter(prefix="/students", tags=["O'quvchilar (Students)"])
 
@@ -84,6 +85,7 @@ def create_student(
     student_in: schemas.StudentCreate,
     month: str = Query("2026-11", description="To'lov oyi"),
     db: Session = Depends(get_db),
+    _auth = Depends(verify_write_permission),
 ):
     dept = crud.get_department(db, student_in.department_id)
     if not dept:
@@ -123,7 +125,12 @@ def create_student(
 
 
 @router.put("/{student_id}", response_model=schemas.StudentOut)
-def update_student(student_id: int, student_in: schemas.StudentUpdate, db: Session = Depends(get_db)):
+def update_student(
+    student_id: int,
+    student_in: schemas.StudentUpdate,
+    db: Session = Depends(get_db),
+    _auth = Depends(verify_write_permission),
+):
     student = crud.update_student(db, student_id, student_in)
     if not student:
         raise HTTPException(status_code=404, detail="O'quvchi topilmadi")
@@ -132,7 +139,11 @@ def update_student(student_id: int, student_in: schemas.StudentUpdate, db: Sessi
 
 
 @router.delete("/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_student(student_id: int, db: Session = Depends(get_db)):
+def delete_student(
+    student_id: int,
+    db: Session = Depends(get_db),
+    _auth = Depends(verify_write_permission),
+):
     success = crud.delete_student(db, student_id)
     if not success:
         raise HTTPException(status_code=404, detail="O'quvchi topilmadi")
