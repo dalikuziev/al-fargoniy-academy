@@ -41,13 +41,10 @@ export const getAvailableMonths = () => {
   const startYear = 2026;
   const startMonth = 11; // 2026-Noyabr boshlang'ich
 
-  // Keyingi 1 oyni ham ro'yxatga qo'shamiz (foydalanuvchi xohlagan payt oldindan o'tib ko'rishi uchun)
-  let maxYear = currentYear;
-  let maxMonth = currentMonth + 1;
-  if (maxMonth > 12) {
-    maxMonth = 1;
-    maxYear += 1;
-  }
+  // FAQAT bugungi kungacha yetib kelgan (o'tgan va joriy) oylar ro'yxatda bo'ladi.
+  // Kelgusi oy (masalan Dekabr) faqat sana 1-dekabr bo'lganda avtomatik paydo bo'ladi!
+  const maxYear = currentYear;
+  const maxMonth = currentMonth;
 
   const months = [];
   let y = startYear;
@@ -63,7 +60,7 @@ export const getAvailableMonths = () => {
       // Joriy oyda bugungi sana: masalan "19-11-2026"
       label = uzInfo.formattedDate;
     } else {
-      // O'tgan yoki kelgusi oy: masalan "2026-Noyabr" yoki "2026-Dekabr"
+      // O'tgan oy (Tarix): masalan "2026-Noyabr"
       label = `${y}-${UZ_MONTH_NAMES[m - 1]}`;
     }
 
@@ -91,6 +88,13 @@ export default function Navbar({
 }) {
   const [currentDateInfo, setCurrentDateInfo] = useState(() => getUzbekistanDateInfo());
 
+  // Kelajakdagi oyni tanlashga yo'l qo'ymaslik (Dekabr faqat 1-dekabrda chiqadi)
+  useEffect(() => {
+    if (selectedMonth > currentDateInfo.monthKey) {
+      setSelectedMonth(currentDateInfo.monthKey);
+    }
+  }, [selectedMonth, currentDateInfo.monthKey, setSelectedMonth]);
+
   // Har 30 sekundda O'zbekiston vaqtini yangilab turish (yarim kechasi 00:00 da sana avtomatik yangilanishi uchun)
   useEffect(() => {
     const timer = setInterval(() => {
@@ -107,14 +111,14 @@ export default function Navbar({
 
   const months = useMemo(() => {
     const list = getAvailableMonths();
-    // Agar tanlangan oy ro'yxatda bo'lmasa, uni ham qo'shib qo'yamiz
-    if (!list.some((item) => item.value === selectedMonth)) {
+    // Agar tanlangan oy ro'yxatda bo'lmasa va u o'tmishdagi oy (tarix) bo'lsa, uni ham qo'shib qo'yamiz
+    if (!list.some((item) => item.value === selectedMonth) && selectedMonth <= currentDateInfo.monthKey) {
       const [y, m] = selectedMonth.split('-').map(Number);
       const mName = UZ_MONTH_NAMES[m - 1] || m;
       list.push({ value: selectedMonth, label: `${y}-${mName}` });
     }
     return list;
-  }, [selectedMonth, currentDateInfo.formattedDate]);
+  }, [selectedMonth, currentDateInfo.formattedDate, currentDateInfo.monthKey]);
 
   return (
     <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
