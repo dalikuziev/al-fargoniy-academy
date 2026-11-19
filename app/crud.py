@@ -1,13 +1,20 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
 
 from . import models, schemas
 
+UZB_TZ = timezone(timedelta(hours=5))
+
 
 def utc_now():
     return datetime.now(timezone.utc)
+
+
+def get_current_uzb_month() -> str:
+    """O'zbekiston vaqti (UTC+5) bo'yicha joriy oyni 'YYYY-MM' formatda qaytaradi."""
+    return datetime.now(UZB_TZ).strftime("%Y-%m")
 
 
 # ==========================================
@@ -327,7 +334,9 @@ def ensure_monthly_payments_for_students(db: Session, month: str):
         db.commit()
 
 
-def get_payment_summary(db: Session, month: str = "2026-11", department_id: Optional[int] = None) -> dict:
+def get_payment_summary(db: Session, month: Optional[str] = None, department_id: Optional[int] = None) -> dict:
+    if not month:
+        month = get_current_uzb_month()
     ensure_monthly_payments_for_students(db, month)
 
     students_query = db.query(models.Student).filter(models.Student.is_active == True)

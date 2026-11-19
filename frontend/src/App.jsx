@@ -58,7 +58,12 @@ export default function App() {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('al_farganiy_user');
-      return saved ? JSON.parse(saved) : null;
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.name) {
+        parsed.name = parsed.name.replace(/\s*\([Kk]o['`ʼ]rish\)/gi, '').trim();
+      }
+      return parsed;
     } catch {
       return null;
     }
@@ -78,9 +83,13 @@ export default function App() {
   };
 
   const handleLoginSuccess = (userData) => {
-    setUser(userData);
-    localStorage.setItem('al_farganiy_user', JSON.stringify(userData));
-    showToast(`Xush kelibsiz, ${userData.name || userData.username}!`);
+    const cleanUser = {
+      ...userData,
+      name: (userData.name || '').replace(/\s*\([Kk]o['`ʼ]rish\)/gi, '').trim() || userData.username,
+    };
+    setUser(cleanUser);
+    localStorage.setItem('al_farganiy_user', JSON.stringify(cleanUser));
+    showToast(`Xush kelibsiz, ${cleanUser.name || cleanUser.username}!`);
   };
 
   const handleLogout = () => {

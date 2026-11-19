@@ -57,7 +57,7 @@ def login(creds: LoginRequest, request: Request):
             "username": "admin",
             "role": "viewer",
             "can_edit": False,
-            "name": "Administrator (Ko'rish)",
+            "name": "Administrator",
         }
 
     logger.warning(f"AUDIT | Muvaffaqiyatsiz kirish urinishi | user='{username}' | IP={client_ip}")

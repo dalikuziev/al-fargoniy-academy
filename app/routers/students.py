@@ -16,11 +16,13 @@ def list_students(
     module: Optional[str] = Query(None, description="Modul bo'yicha filter (Dasturlash asoslari, Telegram bot, Web site)"),
     group_time: Optional[str] = Query(None, description="Eski moslik"),
     search: Optional[str] = Query(None, description="Ism yoki telefon qidirish"),
-    month: str = Query("2026-11", description="Ko'rsatiladigan to'lov oyi"),
+    month: Optional[str] = Query(None, description="Ko'rsatiladigan to'lov oyi"),
     skip: int = Query(0, ge=0),
     limit: int = Query(200, ge=1, le=500),
     db: Session = Depends(get_db),
 ):
+    if not month:
+        month = crud.get_current_uzb_month()
     crud.ensure_monthly_payments_for_students(db, month)
     students = crud.get_students(
         db,
@@ -56,9 +58,11 @@ def list_students(
 @router.get("/{student_id}", response_model=schemas.StudentDetailOut)
 def get_student(
     student_id: int,
-    month: str = Query("2026-11", description="To'lov oyi"),
+    month: Optional[str] = Query(None, description="To'lov oyi"),
     db: Session = Depends(get_db),
 ):
+    if not month:
+        month = crud.get_current_uzb_month()
     student = crud.get_student(db, student_id)
     if not student:
         raise HTTPException(status_code=404, detail="O'quvchi topilmadi")
@@ -83,10 +87,12 @@ def get_student(
 @router.post("", response_model=schemas.StudentDetailOut, status_code=status.HTTP_201_CREATED)
 def create_student(
     student_in: schemas.StudentCreate,
-    month: str = Query("2026-11", description="To'lov oyi"),
+    month: Optional[str] = Query(None, description="To'lov oyi"),
     db: Session = Depends(get_db),
     _auth = Depends(verify_write_permission),
 ):
+    if not month:
+        month = crud.get_current_uzb_month()
     dept = crud.get_department(db, student_in.department_id)
     if not dept:
         raise HTTPException(status_code=400, detail="Bunday filial mavjud emas")
